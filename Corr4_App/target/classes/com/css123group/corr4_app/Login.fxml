@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.css123group.corr4_app.LoginController"
+           prefWidth="1920" prefHeight="1080"
+           stylesheets="@login.css">
+
+    <!-- Background gradient -->
+    <background>
+        <Background>
+            <fills>
+                <BackgroundFill>
+                    <fill>
+                        <LinearGradient startX="0" startY="0" endX="1" endY="1" proportional="true">
+                            <stops>
+                                <Stop offset="0" color="#d32f2f"/>
+                                <Stop offset="0.5" color="#424242"/>
+                                <Stop offset="1" color="#212121"/>
+                            </stops>
+                        </LinearGradient>
+                    </fill>
+                </BackgroundFill>
+            </fills>
+        </Background>
+    </background>
+
+    <!-- Main content -->
+    <VBox alignment="CENTER" spacing="25">
+        <!-- Header -->
+        <Label text="WELCOME TO CORR4" styleClass="header-label"/>
+
+        <!-- Form -->
+        <VBox spacing="20" alignment="CENTER">
+            <!-- Email -->
+            <VBox spacing="5" alignment="CENTER">
+                <Label text="Email" styleClass="label"/>
+                <TextField fx:id="emailField" prefWidth="300" maxWidth="300" styleClass="text-field"/>
+            </VBox>
+
+            <!-- Password -->
+            <VBox spacing="5" alignment="CENTER">
+                <Label text="Password" styleClass="label"/>
+                <PasswordField fx:id="passwordField" prefWidth="300" maxWidth="300" styleClass="password-field"/>
+                <Hyperlink text="Forgot Password" styleClass="hyperlink"/>
+            </VBox>
+        </VBox>
+
+        <!-- Buttons -->
+        <VBox spacing="15" alignment="CENTER">
+            <Button text="LOGIN" fx:id="loginButton" onAction="#handleLogin" styleClass="text-button"/>
+            <Button text="REGISTER NEW ACCOUNT" fx:id="registerButton" onAction="#handleRegister" styleClass="text-button"/>
+        </VBox>
+    </VBox>
+</StackPane>
+
