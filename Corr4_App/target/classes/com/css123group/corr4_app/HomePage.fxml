@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.css123group.corr4_app.HomeController"
+            fx:id="rootPane"
+            prefWidth="1160" prefHeight="850"
+            stylesheets="@homepage.css">
+
+    <!-- Sidebar -->
+    <left>
+        <VBox spacing="40" alignment="TOP_CENTER" styleClass="sidebar">
+            <!-- Logo -->
+            <Label text="CORR4" styleClass="header-label"/>
+
+            <!-- Navigation Buttons -->
+            <VBox spacing="25" alignment="CENTER">
+                <Button text="Profile"   onAction="#handleProfile" styleClass="nav-button"/>
+                <Button text="Balance"   onAction="#handleBalance" styleClass="nav-button"/>
+                <Button text="Cards"     onAction="#handleCards" styleClass="nav-button"/>
+                <Button text="Transfer"  onAction="#handleTransfer" styleClass="nav-button"/>
+            </VBox>
+
+            <!-- Push Logout to Bottom -->
+            <Pane VBox.vgrow="ALWAYS"/>
+
+            <!-- Logout Button -->
+            <VBox alignment="BOTTOM_CENTER" style="-fx-padding: 20;">
+                <Button text="LOGOUT" onAction="#handleLogout" styleClass="logout-button"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- Main Content -->
+    <center>
+        <!-- Initial content can be empty or a placeholder -->
+        <StackPane styleClass="main-content">
+            <Label text="Welcome to CORR4" styleClass="header-label"/>
+        </StackPane>
+    </center>
+</BorderPane>
+
+
+
+

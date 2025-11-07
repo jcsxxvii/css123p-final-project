@@ -1,0 +1,48 @@
+/* Main header label */
+.label.header-label {
+    -fx-font-family: "Libre Barcode 39 Extended Text";
+    -fx-font-size: 76px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Form labels */
+.label {
+    -fx-font-family: "Libre Barcode 39 Text";
+    -fx-font-size: 32px;
+    -fx-text-fill: white;
+}
+
+/* Input fields */
+.text-field, .password-field {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 8;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);
+}
+
+/* Text-style buttons (Login + Register) */
+.text-button {
+    -fx-font-family: "Libre Barcode 39 Text";
+    -fx-font-size: 28px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.text-button:hover {
+    -fx-text-fill: #ffccbc;
+}
+
+/* Hyperlink styling */
+.hyperlink {
+    -fx-text-fill: #ffccbc;
+    -fx-underline: false;
+}
+
+.hyperlink:hover {
+    -fx-underline: true;
+}
