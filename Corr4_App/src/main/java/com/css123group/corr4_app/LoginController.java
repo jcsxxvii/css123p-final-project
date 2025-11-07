@@ -10,7 +10,6 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.event.ActionEvent;
-
 import java.io.IOException;
 
 public class LoginController {
@@ -22,31 +21,23 @@ public class LoginController {
     private PasswordField passwordField;
 
     @FXML
-    private Label welcomeText; // Optional if you want to show messages
+    private Label welcomeText;
 
-    // Modified handleLogin to navigate to HomePage
     @FXML
     protected void handleLogin(ActionEvent event) {
         String email = emailField.getText();
         String password = passwordField.getText();
 
-        // Temporary message
         System.out.println("Login clicked: " + email + " / " + password);
         if (welcomeText != null) {
             welcomeText.setText("Attempting login for: " + email);
         }
 
         try {
-            // Load HomePage FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("HomePage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/css123group/corr4_app/HomePage.fxml"));
             Parent homePageRoot = loader.load();
-
-            // Get current stage
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-            // Set new scene
-            Scene scene = new Scene(homePageRoot);
-            stage.setScene(scene);
+            stage.setScene(new Scene(homePageRoot));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -57,12 +48,20 @@ public class LoginController {
     }
 
     @FXML
-    protected void handleRegister() {
+    protected void handleRegister(ActionEvent event) {
         System.out.println("Register button clicked");
-        if (welcomeText != null) {
-            welcomeText.setText("Redirecting to registration...");
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/css123group/corr4_app/Register.fxml"));
+            Parent registerRoot = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(registerRoot));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            if (welcomeText != null) {
+                welcomeText.setText("Failed to load registration page.");
+            }
         }
-        // You can later navigate to a Registration page here
     }
 }
-
