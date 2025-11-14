@@ -38,10 +38,23 @@
 
     <!-- Main Content -->
     <center>
-        <!-- Initial content can be empty or a placeholder -->
-        <StackPane styleClass="main-content">
-            <Label text="Welcome to CORR4" styleClass="header-label"/>
-        </StackPane>
+        <!-- Table of customers -->
+        <VBox spacing="10" styleClass="main-content" fx:id="mainContent" alignment="TOP_CENTER" prefWidth="800" prefHeight="600" >
+            <Label text="Customers" styleClass="section-label" />
+            <TableView fx:id="customersTable" prefWidth="900" prefHeight="520">
+                <columns>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="60" />
+                    <TableColumn fx:id="colFirstName" text="First Name" prefWidth="120" />
+                    <TableColumn fx:id="colLastName" text="Last Name" prefWidth="120" />
+                    <TableColumn fx:id="colEmail" text="Email" prefWidth="180" />
+                    <TableColumn fx:id="colPhone" text="Phone" prefWidth="110" />
+                    <TableColumn fx:id="colAddress" text="Address" prefWidth="160" />
+                    <TableColumn fx:id="colDob" text="DOB" prefWidth="100" />
+                    <TableColumn fx:id="colProvider" text="Provider" prefWidth="100" />
+                    <TableColumn fx:id="colDisabled" text="Disabled" prefWidth="80" />
+                </columns>
+            </TableView>
+        </VBox>
     </center>
 </BorderPane>
 

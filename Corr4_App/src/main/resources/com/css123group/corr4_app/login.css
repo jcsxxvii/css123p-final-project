@@ -46,3 +46,74 @@
 .hyperlink:hover {
     -fx-underline: true;
 }
+
+/* ChoiceBox styling */
+.choice-box {
+    -fx-text-fill: black;
+    -fx-padding: 8;
+}
+
+.choice-box:focused {
+    -fx-text-fill: black;
+}
+
+.choice-box .label {
+    -fx-text-fill: black;
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 14px;
+}
+
+.menu-item:focused {
+    -fx-text-fill: black;
+}
+
+.menu-item .label {
+    -fx-text-fill: black;
+}
+
+
+/* Ensure scroll panes and their viewports are transparent so the StackPane gradient shows through */
+.scroll-pane, .scroll-pane .viewport {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-control-inner-background: transparent;
+}
+
+/* AnchorPane overlay should be transparent */
+.anchor-pane {
+    -fx-background-color: transparent;
+}
+
+/* Registration page specific overrides:
+   - Keep text inside input controls (text fields, password fields, date editors, choice editors) black
+   - Make labels and other text outside input controls white so they contrast with the dark background
+   - Keep action button text white to match header style
+*/
+.register-form .label {
+    -fx-text-fill: white;
+}
+
+/* Inputs (editors) should remain black so user-typed text is readable */
+.register-form .text-field,
+.register-form .password-field,
+.register-form .combo-box-base {
+    -fx-text-fill: black;
+    -fx-text-inner-color: black;
+}
+
+/* DatePicker has an embedded editor TextField; ensure its editor text stays black */
+.register-form .date-picker .editor {
+    -fx-text-fill: black;
+    -fx-text-inner-color: black;
+}
+
+/* ChoiceBox shows a selected value inside a control — treat it as an input so keep its text black */
+.register-form .choice-box,
+.register-form .choice-box .label {
+    -fx-text-fill: black;
+}
+
+.register-form .text-button {
+    -fx-text-fill: white; /* keep buttons white to match header style */
+}
+

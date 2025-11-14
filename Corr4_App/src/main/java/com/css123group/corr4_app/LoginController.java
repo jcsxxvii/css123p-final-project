@@ -53,7 +53,7 @@ public class LoginController {
 
     @FXML
     protected void handleLogin(ActionEvent event) {
-        String email = emailField.getText().trim();
+        String email = emailField.getText().trim().toLowerCase();
         String password = passwordField.getText();
         System.out.println("Login clicked: " + email + " / " + password);
 
@@ -84,13 +84,11 @@ public class LoginController {
 
         // NOTE: No authentication backend exists — proceed to HomePage for now.
         try {
-            // Authenticate using Auth (verifies password)
+            // Authenticate using Auth (verifies password against user_credentials)
             Customer customer = auth.authenticate(email, password);
 
             if (customer == null) {
-                if (welcomeText != null) {
-                    welcomeText.setText("Invalid credentials. Please check email/password.");
-                }
+                Alerts.showError("Invalid Credentials", "Email or password is incorrect.");
                 return;
             }
 
@@ -114,11 +112,13 @@ public class LoginController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            // Use the new utility class for error handling
             Alerts.showError("Navigation Error", "Failed to load the main application Home Page.");
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+            Alerts.showError("Database Error", "An error occurred while verifying credentials: " + e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            Alerts.showError("Login Error", "An error occurred during login: " + e.getMessage());
+            Alerts.showError("Login Error", "An unexpected error occurred: " + e.getMessage());
         }
     }
 

@@ -10,8 +10,8 @@
 
 <StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml"
            fx:controller="com.css123group.corr4_app.RegisterController"
-           prefWidth="1920" prefHeight="1080"
-           stylesheets="@login.css">
+           stylesheets="@login.css"
+           styleClass="register-form">
 
     <!-- Background gradient (same as Login.fxml) -->
     <background>
@@ -32,52 +32,93 @@
         </Background>
     </background>
 
-    <!-- Main content -->
-    <VBox alignment="CENTER" spacing="25">
+    <!-- Main content with scroll support -->
+    <ScrollPane fitToWidth="true" pannable="true" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent; -fx-control-inner-background: transparent; -fx-padding: 0; -fx-border-color: transparent;">
+        <VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 30; -fx-background-color: transparent; -fx-border-color: transparent;">
 
-        <!-- Header -->
-        <Label text="CREATE NEW ACCOUNT" styleClass="header-label"/>
+            <!-- Header -->
+            <Label text="CREATE NEW ACCOUNT" styleClass="header-label"/>
 
-        <!-- Registration Form -->
-        <VBox spacing="15" alignment="CENTER">
-            <VBox spacing="5" alignment="CENTER">
-                <Label text="Full Name" styleClass="label"/>
-                <TextField fx:id="fullNameField" prefWidth="300" maxWidth="300" styleClass="text-field"/>
-            </VBox>
+            <!-- Registration Form in 2-column GridPane -->
+            <GridPane hgap="20" vgap="15" alignment="CENTER" style="-fx-padding: 0 100 0 100; -fx-background-color: transparent; -fx-border-color: transparent;">
+                <columnConstraints>
+                    <ColumnConstraints prefWidth="300" halignment="CENTER"/>
+                    <ColumnConstraints prefWidth="300" halignment="CENTER"/>
+                </columnConstraints>
 
-            <VBox spacing="5" alignment="CENTER">
-                <Label text="Email" styleClass="label"/>
-                <TextField fx:id="emailField" prefWidth="300" maxWidth="300" styleClass="text-field"/>
-            </VBox>
+                <!-- Row 0: Full Name (span 2 columns) -->
+                <VBox spacing="5" alignment="CENTER" GridPane.columnSpan="2" GridPane.rowIndex="0">
+                    <Label text="Full Name" styleClass="label"/>
+                    <TextField fx:id="fullNameField" prefWidth="300" maxWidth="300" styleClass="text-field"/>
+                </VBox>
 
-            <VBox spacing="5" alignment="CENTER">
-                <Label text="Password" styleClass="label"/>
-                <PasswordField fx:id="passwordField" prefWidth="300" maxWidth="300" styleClass="password-field"/>
-            </VBox>
+                <!-- Row 1: First Name (left), Last Name (right) - optional split -->
+                <VBox spacing="5" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <Label text="Phone" styleClass="label"/>
+                    <TextField fx:id="phoneField" prefWidth="280" styleClass="text-field"/>
+                </VBox>
+                <VBox spacing="5" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <Label text="Address" styleClass="label"/>
+                    <TextField fx:id="addressField" prefWidth="280" styleClass="text-field"/>
+                </VBox>
 
-            <VBox spacing="5" alignment="CENTER">
-                <Label text="Confirm Password" styleClass="label"/>
-                <PasswordField fx:id="confirmPasswordField" prefWidth="300" maxWidth="300" styleClass="password-field"/>
-            </VBox>
+                <!-- Row 2: Date of Birth (left), Provider (right) -->
+                <VBox spacing="5" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                    <Label text="Date of Birth" styleClass="label"/>
+                    <DatePicker fx:id="dobPicker" prefWidth="280"/>
+                </VBox>
+                <VBox spacing="5" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <Label text="Bank Provider" styleClass="label"/>
+                    <TextField fx:id="providerField" prefWidth="280" styleClass="text-field" promptText="e.g., Bank XYZ"/>
+                </VBox>
 
-            <VBox spacing="5" alignment="CENTER">
-                <Label text="Account Number" styleClass="label"/>
-                <TextField fx:id="accountNumberField" prefWidth="300" maxWidth="300" styleClass="text-field"/>
-            </VBox>
+                <!-- Row 3: Marital Status (span 2 columns, centered) -->
+                <VBox spacing="5" alignment="CENTER" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                    <Label text="Marital Status" styleClass="label"/>
+                    <ChoiceBox fx:id="statusChoice" prefWidth="280" style="-fx-text-fill: black; -fx-font-size: 14px;"/>
+                </VBox>
 
-            <VBox spacing="5" alignment="CENTER">
-                <Label text="Initial Deposit" styleClass="label"/>
-                <TextField fx:id="initialDepositField" prefWidth="300" maxWidth="300" styleClass="text-field"/>
-            </VBox>
+                <!-- Row 4: Email (span 2 columns) -->
+                <VBox spacing="5" alignment="CENTER" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                    <Label text="Email" styleClass="label"/>
+                    <TextField fx:id="emailField" prefWidth="300" maxWidth="300" styleClass="text-field"/>
+                </VBox>
+
+                <!-- Row 5: Password (left), Confirm Password (right) -->
+                <VBox spacing="5" alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="5">
+                    <Label text="Password" styleClass="label"/>
+                    <PasswordField fx:id="passwordField" prefWidth="280" styleClass="password-field"/>
+                </VBox>
+                <VBox spacing="5" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                    <Label text="Confirm Password" styleClass="label"/>
+                    <PasswordField fx:id="confirmPasswordField" prefWidth="280" styleClass="password-field"/>
+                </VBox>
+
+                <!-- Row 6: Account Number (span 2 columns) -->
+                <VBox spacing="5" alignment="CENTER" GridPane.columnSpan="2" GridPane.rowIndex="6">
+                    <Label text="Account Number" styleClass="label"/>
+                    <TextField fx:id="accountNumberField" prefWidth="300" maxWidth="300" styleClass="text-field"/>
+                </VBox>
+
+                <!-- Row 7: Initial Deposit (span 2 columns) -->
+                <VBox spacing="5" alignment="CENTER" GridPane.columnSpan="2" GridPane.rowIndex="7">
+                    <Label text="Initial Deposit" styleClass="label"/>
+                    <TextField fx:id="initialDepositField" prefWidth="300" maxWidth="300" styleClass="text-field"/>
+                </VBox>
+            </GridPane>
+
+            <!-- Status Label -->
+            <Label fx:id="statusLabel" textFill="red" wrapText="true" alignment="CENTER"/>
+
         </VBox>
+    </ScrollPane>
 
-        <!-- Buttons -->
-        <VBox spacing="15" alignment="CENTER">
-            <Button text="REGISTER" fx:id="registerButton" onAction="#handleRegister" styleClass="text-button"/>
+    <!-- Fixed button bar anchored to bottom-right so REGISTER is always reachable -->
+    <AnchorPane pickOnBounds="false">
+        <HBox spacing="12" alignment="CENTER_RIGHT" AnchorPane.rightAnchor="20.0" AnchorPane.bottomAnchor="20.0">
             <Button text="BACK TO LOGIN" fx:id="backButton" onAction="#handleBack" styleClass="text-button"/>
-        </VBox>
+            <Button text="REGISTER" fx:id="registerButton" onAction="#handleRegister" styleClass="text-button"/>
+        </HBox>
+    </AnchorPane>
 
-        <Label fx:id="statusLabel" textFill="red" wrapText="true"/>
-
-    </VBox>
 </StackPane>

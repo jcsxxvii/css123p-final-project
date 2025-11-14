@@ -10,6 +10,12 @@ public class Customer {
     private String phone;
     private String address;
     private LocalDate dateOfBirth;
+    // Optional credential fields (may be null)
+    private String passwordHash;
+    private String salt;
+    private String provider;
+    private boolean disabled;
+    private String status;
     
     // Constructors
     public Customer() {}
@@ -44,6 +50,22 @@ public class Customer {
     
     public LocalDate getDateOfBirth() { return dateOfBirth; }
     public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+
+    // Credential getters/setters
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    public String getSalt() { return salt; }
+    public void setSalt(String salt) { this.salt = salt; }
+
+    public String getProvider() { return provider; }
+    public void setProvider(String provider) { this.provider = provider; }
+
+    public boolean isDisabled() { return disabled; }
+    public void setDisabled(boolean disabled) { this.disabled = disabled; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
     
     @Override
     public String toString() {

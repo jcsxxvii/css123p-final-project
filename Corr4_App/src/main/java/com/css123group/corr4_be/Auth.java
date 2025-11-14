@@ -2,7 +2,6 @@ package com.css123group.corr4_be;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Base64;
@@ -41,33 +40,64 @@ public class Auth {
         // Create credentials table if it doesn't exist
         ensureCredentialsTable();
 
-        // Create customer record
+        // Hash password first and attach to customer so createCustomer can persist them if registrations requires it
+        byte[] salt = generateSalt();
+        byte[] hash;
+        try {
+            hash = pbkdf2(plainPassword.toCharArray(), salt, DEFAULT_ITERATIONS, HASH_BYTES);
+        } catch (Exception e) {
+            System.err.println("Error hashing password: " + e.getMessage());
+            return null;
+        }
+        String hashB64 = Base64.getEncoder().encodeToString(hash);
+        String saltB64 = Base64.getEncoder().encodeToString(salt);
+        customer.setPasswordHash(hashB64);
+        customer.setSalt(saltB64);
+        customer.setProvider("local");
+
+        // Create customer record (may write credentials into registrations if schema supports it)
         boolean created = customerDAO.createCustomer(customer);
         if (!created) {
             return null;
         }
 
         int customerId = customer.getId();
-        // Hash password
-        byte[] salt = generateSalt();
-        byte[] hash;
-        try {
-            hash = pbkdf2(plainPassword.toCharArray(), salt, DEFAULT_ITERATIONS, HASH_BYTES);
-        } catch (Exception e) {
-            // Rollback: optionally delete created customer? For now, log and return null
-            System.err.println("Error hashing password: " + e.getMessage());
-            return null;
-        }
 
-        // Store credentials
+        // Store credentials in user_credentials table as well (best-effort)
         String insertSql = "INSERT INTO " + CREDENTIALS_TABLE + " (c_id, email, password_hash, salt, provider) VALUES (?, ?, ?, ?, 'local')";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
             pstmt.setInt(1, customerId);
             pstmt.setString(2, customer.getEmail());
-            pstmt.setString(3, Base64.getEncoder().encodeToString(hash));
-            pstmt.setString(4, Base64.getEncoder().encodeToString(salt));
-            pstmt.executeUpdate();
+            pstmt.setString(3, hashB64);
+            pstmt.setString(4, saltB64);
+            try {
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                // If a credentials row already exists for this email, update its c_id to point to the newly created registration
+                System.err.println("Auth: could not insert into " + CREDENTIALS_TABLE + " (attempting to attach existing credential): " + e.getMessage());
+                String updateSql = "UPDATE " + CREDENTIALS_TABLE + " SET c_id = ? WHERE LOWER(email) = LOWER(?)";
+                try (PreparedStatement up = conn.prepareStatement(updateSql)) {
+                    up.setInt(1, customerId);
+                    up.setString(2, customer.getEmail());
+                    int updated = up.executeUpdate();
+                    System.out.println("Auth: updated existing credential rows to new c_id, count=" + updated);
+                } catch (SQLException ex) {
+                    System.err.println("Auth: failed to attach existing credential: " + ex.getMessage());
+                }
+            }
+        }
+        // Also ensure any existing user_credentials rows for this email reference the new registration id
+        try (Connection conn2 = DatabaseConnection.getConnection()) {
+            String ensureSql = "UPDATE " + CREDENTIALS_TABLE + " SET c_id = ? WHERE LOWER(email) = LOWER(?)";
+            try (PreparedStatement up2 = conn2.prepareStatement(ensureSql)) {
+                up2.setInt(1, customerId);
+                up2.setString(2, customer.getEmail());
+                int updated2 = up2.executeUpdate();
+                if (updated2 > 0) System.out.println("Auth: ensured user_credentials attached to reg id=" + customerId + ", updated=" + updated2);
+            }
+        } catch (SQLException e) {
+            System.err.println("Auth: final attach attempt failed: " + e.getMessage());
         }
 
         return customer;
@@ -78,43 +108,77 @@ public class Auth {
      * Returns the Customer on success, or null on failure.
      */
     public Customer authenticate(String email, String plainPassword) throws SQLException {
-        // Find customer by email
-        Customer customer = customerDAO.getCustomerByEmail(email);
-        if (customer == null) {
-            return null;
+        // Unified authenticate: try to get a Customer (with credentials) from DAO
+        System.out.println("Auth: authenticating email='" + email + "'");
+        Customer customer = null;
+        try {
+            customer = customerDAO.getCustomerByEmail(email);
+        } catch (SQLException e) {
+            System.err.println("Auth: error while fetching customer by email: " + e.getMessage());
+            throw e;
         }
 
-        ensureCredentialsTable();
-
-        String query = "SELECT password_hash, salt FROM " + CREDENTIALS_TABLE + " WHERE c_id = ? AND disabled = false";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, customer.getId());
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (!rs.next()) {
-                    return null; // no credentials for this customer
-                }
-                String hashB64 = rs.getString("password_hash");
-                String saltB64 = rs.getString("salt");
-
-                byte[] storedHash = Base64.getDecoder().decode(hashB64);
-                byte[] salt = Base64.getDecoder().decode(saltB64);
-
-                byte[] computedHash;
+        if (customer == null) {
+            // Try credentials-only lookup (when registrations row is missing)
+            try {
+                customer = customerDAO.getCustomerWithCredentialsByEmail(email);
+            } catch (SQLException e) {
+                System.err.println("Auth: error while fetching credentials-only customer: " + e.getMessage());
+                throw e;
+            }
+        } else {
+            // registration exists but might not have credentials attached; try credentials-only lookup to find credential row
+            if (customer.getPasswordHash() == null) {
                 try {
-                    computedHash = pbkdf2(plainPassword.toCharArray(), salt, DEFAULT_ITERATIONS, storedHash.length);
-                } catch (Exception e) {
-                    System.err.println("Error computing hash: " + e.getMessage());
-                    return null;
-                }
-
-                if (slowEquals(storedHash, computedHash)) {
-                    return customer;
-                } else {
-                    return null;
+                    Customer credOnly = customerDAO.getCustomerWithCredentialsByEmail(email);
+                    if (credOnly != null) {
+                        // prefer credential data from credentials table
+                        customer.setPasswordHash(credOnly.getPasswordHash());
+                        customer.setSalt(credOnly.getSalt());
+                        customer.setProvider(credOnly.getProvider());
+                        customer.setDisabled(credOnly.isDisabled());
+                        // Keep registration id on customer (the app prefers registration details), but we have credentials
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Auth: error fetching credentials-only record: " + e.getMessage());
                 }
             }
         }
+
+        if (customer == null) {
+            System.out.println("Auth: no customer or credentials found for email");
+            return null;
+        }
+
+        String hashB64 = customer.getPasswordHash();
+        String saltB64 = customer.getSalt();
+        if (hashB64 == null || saltB64 == null) {
+            System.out.println("Auth: credentials not present for customer id=" + customer.getId());
+            return null;
+        }
+
+        byte[] storedHash;
+        byte[] salt;
+        try {
+            storedHash = Base64.getDecoder().decode(hashB64);
+            salt = Base64.getDecoder().decode(saltB64);
+        } catch (IllegalArgumentException iae) {
+            System.err.println("Auth: invalid base64 in stored credentials: " + iae.getMessage());
+            return null;
+        }
+
+        byte[] computedHash;
+        try {
+            computedHash = pbkdf2(plainPassword.toCharArray(), salt, DEFAULT_ITERATIONS, storedHash.length);
+        } catch (Exception e) {
+            System.err.println("Error computing hash: " + e.getMessage());
+            return null;
+        }
+
+        if (slowEquals(storedHash, computedHash)) {
+            return customer;
+        }
+        return null;
     }
 
     /** Create credentials table if missing. */

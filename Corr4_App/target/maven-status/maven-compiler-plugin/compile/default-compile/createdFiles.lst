@@ -3,10 +3,14 @@ com\css123group\corr4_be\Account.class
 com\css123group\corr4_app\LoginController.class
 com\css123group\corr4_be\BankingService.class
 com\css123group\corr4_be\Auth.class
+com\css123group\corr4_be\TestDbShow.class
 com\css123group\corr4_app\HomeController$1.class
+com\css123group\corr4_be\TestSeedUser.class
 com\css123group\corr4_be\CustomerDAO.class
 com\css123group\corr4_app\SessionManager.class
+com\css123group\corr4_be\TestDbInspect.class
 module-info.class
+com\css123group\corr4_be\TestDbSchema.class
 com\css123group\corr4_app\ProfileController$1.class
 com\css123group\corr4_be\DatabaseConnection.class
 com\css123group\corr4_be\Customer.class
@@ -18,6 +22,7 @@ com\css123group\corr4_be\AccountDAO.class
 com\css123group\corr4_app\HomeController.class
 com\css123group\corr4_app\BankApp.class
 com\css123group\corr4_app\CardsController.class
+com\css123group\corr4_be\TestAuth.class
 com\css123group\corr4_be\DatabaseDiagnostic.class
 com\css123group\corr4_be\Transaction.class
 com\css123group\corr4_app\RegisterController.class

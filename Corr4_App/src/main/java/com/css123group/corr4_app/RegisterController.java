@@ -19,8 +19,14 @@ import javafx.stage.Stage;
 
 import com.css123group.corr4_be.Auth;
 import com.css123group.corr4_be.Customer;
+import javafx.fxml.Initializable;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Button;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class RegisterController {
+public class RegisterController implements Initializable {
 
     @FXML private TextField fullNameField;
     @FXML private TextField emailField;
@@ -28,6 +34,12 @@ public class RegisterController {
     @FXML private PasswordField confirmPasswordField;
     @FXML private TextField initialDepositField;
     @FXML private Label statusLabel;
+    @FXML private TextField phoneField;
+    @FXML private TextField addressField;
+    @FXML private DatePicker dobPicker;
+    @FXML private TextField providerField;
+    @FXML private ChoiceBox<String> statusChoice;
+    @FXML private Button registerButton;
 
     private Auth auth;
 
@@ -64,11 +76,21 @@ public class RegisterController {
         String password = passwordField.getText();
         String confirmPassword = confirmPasswordField.getText();
         String deposit = initialDepositField.getText();
+        String phone = phoneField.getText().trim();
+        String address = addressField.getText().trim();
+        java.time.LocalDate dob = dobPicker.getValue();
+        String provider = providerField.getText().trim();
+        String status = statusChoice.getValue();
         
         // --- 1. Basic Emptiness Check ---
         if (fullName.isEmpty() || email.isEmpty() || password.isEmpty() ||
-                confirmPassword.isEmpty() || deposit.isEmpty()) {
+            confirmPassword.isEmpty() || deposit.isEmpty() || phone.isEmpty() || address.isEmpty() || dob==null || provider.isEmpty()) {
             statusLabel.setText("❌ Please fill in all fields.");
+            return;
+        }
+        
+        if (status == null) {
+            statusLabel.setText("❌ Please select a Marital Status.");
             return;
         }
 
@@ -111,7 +133,16 @@ public class RegisterController {
             if (auth == null) {
                 auth = new Auth();
             }
-            Customer customer = new Customer(firstName, lastName, email, "", "", java.time.LocalDate.parse("1990-01-01"));
+            Customer customer = new Customer(firstName, lastName, email, phone, address, dob);
+            customer.setProvider(provider.isEmpty() ? "local" : provider);
+            // set status if Customer model supports
+            try {
+                java.lang.reflect.Method m = customer.getClass().getMethod("setStatus", String.class);
+                m.invoke(customer, status == null ? "Single" : status);
+            } catch (NoSuchMethodException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException nsme) {
+                // setStatus not present or not accessible; ignore
+                System.out.println("Note: setStatus not available or not accessible");
+            }
             Customer created = auth.registerCustomer(customer, password);
             if (created == null) {
                 statusLabel.setText("Failed to create customer account.");
@@ -140,5 +171,14 @@ public class RegisterController {
     @FXML
     protected void handleBack(ActionEvent event) {
         switchScene(event, "/com/css123group/corr4_app/Login.fxml", "Error returning to login.");
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // populate marital status choices
+        if (statusChoice != null) {
+            statusChoice.getItems().addAll("Single", "Married", "Divorced", "Widowed");
+            statusChoice.setValue("Single");
+        }
     }
 }
