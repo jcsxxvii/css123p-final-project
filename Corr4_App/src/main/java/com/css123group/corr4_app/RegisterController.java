@@ -2,29 +2,29 @@ package com.css123group.corr4_app;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.css123group.corr4_be.Auth;
+import com.css123group.corr4_be.Customer;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-import com.css123group.corr4_be.Auth;
-import com.css123group.corr4_be.Customer;
-import javafx.fxml.Initializable;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Button;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class RegisterController implements Initializable {
 
