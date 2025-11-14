@@ -1,12 +1,16 @@
 package com.css123group.corr4_app;
 
+import java.util.List;
+
+import com.css123group.corr4_be.Account;
+import com.css123group.corr4_be.Customer;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox; // Import for Customer object
+import javafx.scene.layout.VBox; // Import for Account object
 
 public class ProfileController {
 
@@ -21,16 +25,43 @@ public class ProfileController {
 
     @FXML
     private void initialize() {
+        loadProfileData(); // <-- NEW: Load data when initialized
         setupInlineEditing();
         setupKeyboardNavigation();
+    }
+
+    /**
+     * Loads the current customer's profile data from the SessionManager and populates the labels.
+     */
+    private void loadProfileData() {
+        SessionManager sessionManager = SessionManager.getInstance();
+        Customer customer = sessionManager.getCurrentCustomer();
+        List<Account> accounts = sessionManager.getCurrentAccounts();
+
+        if (customer == null) {
+            emailLabel.setText("Email: Not Logged In");
+            return;
+        }
+
+        // Populate Customer Details
+        emailLabel.setText("Email: " + customer.getEmail());
+        // Use a ternary operator to handle potential nulls
+        phoneLabel.setText("Phone: " + (customer.getPhone() != null ? customer.getPhone() : "N/A"));
+        addressLabel.setText("Mailing Address: " + (customer.getAddress() != null ? customer.getAddress() : "N/A"));
+        
+        // Populate Account Type (using the first account)
+        String accountType = "N/A";
+        if (accounts != null && !accounts.isEmpty()) {
+            accountType = accounts.get(0).getAccountType();
+        }
+        accountTypeLabel.setText("Account Type: " + accountType);
     }
 
     private void setupInlineEditing() {
         // Make labels editable on double-click
         makeLabelEditable(emailLabel, "Email");
         makeLabelEditable(phoneLabel, "Phone");
-        makeLabelEditable(accountTypeLabel, "Account Type");
-        makeLabelEditable(addressLabel, "Address");
+        makeLabelEditable(addressLabel, "Mailing Address"); // Removed Account Type as it's not a direct customer field to edit
     }
 
     private void makeLabelEditable(Label label, String fieldType) {
@@ -42,47 +73,37 @@ public class ProfileController {
     }
 
     private void startEditing(Label label, String fieldType) {
-        // Remove any existing editing
-        cancelEditing();
+        // Only allow one field to be edited at a time
+        if (activeTextField != null) {
+            cancelEditing();
+        }
 
-        // Create text field for editing
-        TextField textField = new TextField(label.getText().replace(fieldType + ": ", ""));
-        textField.setStyle("-fx-font-size: 14px; -fx-pref-width: 300px;");
+        activeLabel = label;
+        activeTextField = new TextField();
+        
+        // Extract the current value by removing the fieldType prefix
+        String currentValue = label.getText().replace(fieldType + ": ", "").trim();
+        activeTextField.setText(currentValue);
 
-        // Replace label with text field in parent container
-        HBox parent = (HBox) label.getParent();
-        int index = parent.getChildren().indexOf(label);
-        parent.getChildren().set(index, textField);
-
-        // Focus and select all text
-        textField.requestFocus();
-        textField.selectAll();
-
-        // Set up keyboard events for the text field
-        textField.setOnKeyPressed(event -> handleEditKeyPress(event, textField, label, fieldType));
-
-        // Handle focus loss
-        textField.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal) {
-                finishEditing(textField, label, fieldType);
+        // Handle Enter key to finish editing
+        activeTextField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                finishEditing(activeTextField, activeLabel, fieldType);
             }
         });
-
-        activeTextField = textField;
-        activeLabel = label;
-    }
-
-    private void handleEditKeyPress(KeyEvent event, TextField textField, Label label, String fieldType) {
-        switch (event.getCode()) {
-            case ENTER:
-                finishEditing(textField, label, fieldType);
-                break;
-            case ESCAPE:
-                cancelEditing();
-                break;
-            default:
-                // Ignore all other key codes
-                break;
+        
+        // Replace the label with the text field in its parent container
+        if (label.getParent() instanceof HBox) {
+            HBox parent = (HBox) label.getParent();
+            int index = parent.getChildren().indexOf(label);
+            
+            // Add style class to match other inputs (optional, adjust if needed)
+            activeTextField.getStyleClass().add("text-field");
+            activeTextField.setPrefWidth(250); // Set a reasonable width
+            
+            parent.getChildren().set(index, activeTextField);
+            activeTextField.requestFocus();
+            activeTextField.selectAll(); // Select all text for easy replacement
         }
     }
 
@@ -125,4 +146,3 @@ public class ProfileController {
         });
     }
 }
-

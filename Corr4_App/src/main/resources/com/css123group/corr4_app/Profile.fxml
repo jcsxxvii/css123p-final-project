@@ -2,6 +2,7 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 
 <VBox xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml"
@@ -10,11 +11,17 @@
       alignment="CENTER" spacing="20" styleClass="content-box" prefWidth="800" prefHeight="600">
 
     <Label text="PROFILE" styleClass="header-label"/>
-    <Label text="Email: user@example.com" styleClass="normal-label"/>
-    <Label text="Phone: +63 912 345 6789" styleClass="normal-label"/>
-    <Label text="Account Type: Savings" styleClass="normal-label"/>
-    <Label text="Mailing Address: 123 Main St" styleClass="normal-label"/>
+
+    <HBox alignment="CENTER" spacing="10">
+        <Label fx:id="emailLabel" text="Email: user@example.com" styleClass="normal-label"/>
+    </HBox>
+    <HBox alignment="CENTER" spacing="10">
+        <Label fx:id="phoneLabel" text="Phone: +63 912 345 6789" styleClass="normal-label"/>
+    </HBox>
+    <HBox alignment="CENTER" spacing="10">
+        <Label fx:id="accountTypeLabel" text="Account Type: Savings" styleClass="normal-label"/>
+    </HBox>
+    <HBox alignment="CENTER" spacing="10">
+        <Label fx:id="addressLabel" text="Mailing Address: 123 Main St" styleClass="normal-label"/>
+    </HBox>
 </VBox>
-
-
-
