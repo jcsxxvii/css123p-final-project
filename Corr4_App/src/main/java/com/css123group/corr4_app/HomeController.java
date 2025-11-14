@@ -10,16 +10,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import com.css123group.corr4_be.Customer;
-import com.css123group.corr4_be.CustomerDAO;
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class HomeController {
 
@@ -30,35 +23,10 @@ public class HomeController {
     private Label customerNameLabel;
 
     @FXML
-    private TableView<Customer> customersTable;
-
-    @FXML
-    private TableColumn<Customer, Integer> colId;
-    @FXML
-    private TableColumn<Customer, String> colFirstName;
-    @FXML
-    private TableColumn<Customer, String> colLastName;
-    @FXML
-    private TableColumn<Customer, String> colEmail;
-    @FXML
-    private TableColumn<Customer, String> colPhone;
-    @FXML
-    private TableColumn<Customer, String> colAddress;
-    @FXML
-    private TableColumn<Customer, Object> colDob;
-    @FXML
-    private TableColumn<Customer, String> colProvider;
-    @FXML
-    private TableColumn<Customer, Boolean> colDisabled;
-
-    private final CustomerDAO customerDAO = new CustomerDAO();
-
-    @FXML
     public void initialize() {
         // Add global keyboard shortcuts and display customer information
         setupKeyboardShortcuts();
         updateCustomerInfo();
-        setupCustomerTable();
     }
 
     /**
@@ -113,29 +81,6 @@ public class HomeController {
     private void loadCenterContent(String fxmlFile) throws IOException {
         Parent content = FXMLLoader.load(getClass().getResource(fxmlFile));
         rootPane.setCenter(content);
-    }
-
-    private void setupCustomerTable() {
-        if (customersTable == null) return; // not present in some views
-
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        colLastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
-        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        colPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
-        colDob.setCellValueFactory(new PropertyValueFactory<>("dateOfBirth"));
-        colProvider.setCellValueFactory(new PropertyValueFactory<>("provider"));
-        colDisabled.setCellValueFactory(new PropertyValueFactory<>("disabled"));
-
-        // Load data
-        ObservableList<Customer> data = FXCollections.observableArrayList();
-        try {
-            data.addAll(customerDAO.getAllCustomers());
-        } catch (SQLException e) {
-            System.err.println("HomeController: failed to load customers: " + e.getMessage());
-        }
-        customersTable.setItems(data);
     }
 
     // --- Keyboard Shortcuts Setup ---
