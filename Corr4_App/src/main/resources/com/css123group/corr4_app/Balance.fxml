@@ -7,10 +7,15 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.css123group.corr4_app.BalanceController"
       alignment="CENTER" spacing="20" styleClass="content-box" prefWidth="800" prefHeight="600">
+    
     <Label text="ACCOUNT BALANCE" styleClass="header-label"/>
-    <Label text="Account Number: 091248234235" styleClass="normal-label"/>
+    
     <Label fx:id="amountLabel" text="Amount: PHP 35,000,000.00" styleClass="balance-amount"/>
-    <Label text="Transaction History" styleClass="normal-label"/>
+    
+    <Label text="All Accounts" styleClass="normal-label"/>
+    
+    <ListView fx:id="accountListView" prefHeight="200" prefWidth="400" />
+    
+    <Label text="Transaction History (Placeholder)" styleClass="normal-label"/>
+    
 </VBox>
-
-
