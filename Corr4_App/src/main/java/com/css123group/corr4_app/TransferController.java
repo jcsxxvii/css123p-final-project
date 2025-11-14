@@ -6,82 +6,65 @@ import com.css123group.corr4_be.BankingService;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-// Removed: javafx.scene.control.Alert and Alert.AlertType imports
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class TransferController {
 
-    @FXML
-    private TextField amountField;
+    @FXML private TextField amountField;
+    @FXML private TextField fromAccountField;
+    @FXML private TextField toAccountField;
 
-    @FXML
-    private TextField fromAccountField;
-
-    @FXML
-    private TextField toAccountField;
+    private static final DecimalFormat df = new DecimalFormat("#,##0.00");
 
     @FXML
     private void initialize() {
-        // initialization if needed
+        setupKeyboardSupport();
+    }
+
+    private void setupKeyboardSupport() {
+        // Add Enter key support for form submission
+        amountField.setOnKeyPressed(this::handleFieldKeyPress);
+        fromAccountField.setOnKeyPressed(this::handleFieldKeyPress);
+        toAccountField.setOnKeyPressed(this::handleFieldKeyPress);
+    }
+
+    private void handleFieldKeyPress(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER) {
+            if (event.getSource() == toAccountField) {
+                // Last field - submit the form
+                handleConfirm();
+            } else {
+                // Move to next field
+                if (event.getSource() == amountField) {
+                    fromAccountField.requestFocus();
+                } else if (event.getSource() == fromAccountField) {
+                    toAccountField.requestFocus();
+                }
+            }
+            event.consume();
+        } else if (event.getCode() == KeyCode.ESCAPE) {
+            handleClear();
+            event.consume();
+        }
     }
 
     @FXML
     private void handleConfirm() {
         String amount = amountField.getText();
-        String from = fromAccountField.getText().trim(); 
-        String to = toAccountField.getText().trim();     
+        String from = fromAccountField.getText();
+        String to = toAccountField.getText();
 
-        // --- 1. Basic Emptiness Check ---
-        if (amount == null || amount.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            Alerts.showWarning("Input Missing", "Please fill all fields before confirming.");
+        // quick validation example
+        if (amount == null || amount.isEmpty() || from == null || from.isEmpty() || to == null || to.isEmpty()) {
+            Alert a = new Alert(AlertType.WARNING, "Please fill all fields before confirming.");
+            a.showAndWait();
             return;
         }
 
-        // --- 2. Account Number Format Validation ---
-        if (!from.matches("\\d+") || !to.matches("\\d+")) {
-            Alerts.showError("Invalid Account Number", "Account numbers must contain only digits.");
-            return;
-        }
-
-        // --- 3. Self-Transfer Prevention ---
-        if (from.equals(to)) {
-            Alerts.showError("Invalid Transfer", "The source and destination accounts cannot be the same.");
-            return;
-        }
-
-        // --- 4. Numeric and Positive Amount Check ---
-        BigDecimal amt;
-        try {
-            amt = new BigDecimal(amount.trim());
-            if (amt.compareTo(BigDecimal.ZERO) <= 0) {
-                Alerts.showWarning("Invalid Amount", "Amount must be greater than zero.");
-                return;
-            }
-        } catch (NumberFormatException ex) {
-            Alerts.showError("Invalid Amount Format", "Invalid amount. Please enter a valid number.");
-            return;
-        }
-
-        // --- 5. Backend Logic (Existing Simulated Logic) ---
-        BankingService bankingService = new BankingService();
-        boolean withdrawn = bankingService.withdraw(from, amt, "Transfer to " + to);
-        
-        if (!withdrawn) {
-            Alerts.showError("Withdrawal Failed", "Failed to withdraw from source account. Check balance or account number.");
-            return;
-        }
-
-        boolean deposited = bankingService.deposit(to, amt, "Transfer from " + from);
-        if (!deposited) {
-            // Attempt to rollback by re-depositing to source (best-effort)
-            bankingService.deposit(from, amt, "Rollback transfer due to failure");
-            Alerts.showError("Deposit Failed - Rolled Back", "Transfer failed while depositing to destination. Rolled back the withdrawal.");
-            return;
-        }
-
-        Alerts.showInfo("Transfer Complete", "Transfer successful:\nFrom: " + from + "\nTo: " + to + "\nAmount: " + amt);
-        
-        // Clear fields on successful transfer
-        handleClear();
+        // placeholder action: implement actual transfer logic later
+        Alert a = new Alert(AlertType.INFORMATION, "Transfer requested:\nFrom: " + from + "\nTo: " + to + "\nAmount: " + amount);
+        a.showAndWait();
     }
 
     @FXML
@@ -89,5 +72,12 @@ public class TransferController {
         amountField.clear();
         fromAccountField.clear();
         toAccountField.clear();
+        amountField.requestFocus(); // Focus back to first field
+    }
+
+    private void showAlert(AlertType type, String message) {
+        Alert alert = new Alert(type, message);
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 }
