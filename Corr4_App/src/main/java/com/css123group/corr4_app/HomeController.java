@@ -15,7 +15,13 @@ import java.io.IOException;
 public class HomeController {
 
     @FXML
-    private BorderPane rootPane; // fx:id from Homepage.fxml
+    private BorderPane rootPane;
+
+    @FXML
+    public void initialize() {
+        // Add global keyboard shortcuts
+        setupKeyboardShortcuts();
+    }
 
     @FXML
     private Label customerNameLabel; // Add this if your FXML has it
@@ -78,6 +84,72 @@ public class HomeController {
     private void loadCenterContent(String fxmlFile) throws IOException {
         Parent content = FXMLLoader.load(getClass().getResource(fxmlFile));
         rootPane.setCenter(content);
+    }
+
+    // --- Keyboard Shortcuts Setup ---
+    private void setupKeyboardShortcuts() {
+        rootPane.setOnKeyPressed(this::handleKeyPress);
+    }
+
+    private void handleKeyPress(KeyEvent event) {
+        if (event.isControlDown()) {
+            switch (event.getCode()) {
+                case H: // Ctrl+H - Home
+                    try {
+                        loadCenterContent("HomePage.fxml");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case T: // Ctrl+T - Transfer
+                    try {
+                        loadCenterContent("Transfer.fxml");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case L: // Ctrl+L - Logout
+                    try {
+                        logout();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case P: // Ctrl+P - Profile
+                    try {
+                        loadCenterContent("Profile.fxml");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case B: // Ctrl+B - Balance
+                    try {
+                        loadCenterContent("Balance.fxml");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case C: // Ctrl+C - Cards
+                    try {
+                        loadCenterContent("Cards.fxml");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        } else if (event.getCode() == KeyCode.ESCAPE) {
+            // ESC key - return to home
+            try {
+                loadCenterContent("HomePage.fxml");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void logout() throws IOException {
+        Parent loginRoot = FXMLLoader.load(getClass().getResource("Login.fxml"));
+        rootPane.getScene().setRoot(loginRoot);
     }
 }
 

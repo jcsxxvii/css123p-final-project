@@ -9,7 +9,8 @@
             fx:controller="com.css123group.corr4_app.HomeController"
             fx:id="rootPane"
             prefWidth="1160" prefHeight="850"
-            stylesheets="@homepage.css">
+            stylesheets="@homepage.css"
+            focusTraversable="true">
 
     <!-- Sidebar -->
     <left>
@@ -43,6 +44,7 @@
         </StackPane>
     </center>
 </BorderPane>
+
 
 
 

@@ -1,10 +1,19 @@
 package com.css123group.corr4_app;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.event.ActionEvent;
@@ -23,13 +32,9 @@ public class RegisterController {
     @FXML private TextField initialDepositField;
     @FXML private Label statusLabel;
 
-    private Auth auth;
-
-    @FXML
-    private void initialize() {
-        // Initialize the auth helper
-        this.auth = new Auth();
-    }
+    // Email validation pattern for a basic check
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
+        Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     private void switchScene(ActionEvent event, String fxmlPath, String errorMessage) {
         try {
@@ -46,32 +51,66 @@ public class RegisterController {
         }
     }
 
+    private boolean validateEmail(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+        return matcher.find();
+    }
+
     @FXML
     protected void handleRegister(ActionEvent event) {
-        System.out.println("REGISTER button clicked."); // Debug
+        System.out.println("REGISTER button clicked."); 
 
         String fullName = fullNameField.getText().trim();
         String email = emailField.getText().trim();
         String password = passwordField.getText();
         String confirmPassword = confirmPasswordField.getText();
-        String depositText = initialDepositField.getText().trim();
-
-        // Validation
+        String accountNumber = accountNumberField.getText();
+        String deposit = initialDepositField.getText();
+        
+        // --- 1. Basic Emptiness Check ---
         if (fullName.isEmpty() || email.isEmpty() || password.isEmpty() ||
-                confirmPassword.isEmpty() || depositText.isEmpty()) {
-            statusLabel.setText("Please fill in all fields.");
+                confirmPassword.isEmpty() || accountNumber.isEmpty() || deposit.isEmpty()) {
+            statusLabel.setText("❌ Please fill in all fields.");
             return;
         }
 
+        // --- 2. Email Format Validation ---
+        if (!validateEmail(email)) {
+            statusLabel.setText("❌ Invalid email format.");
+            return;
+        }
+
+        // --- 3. Password Match Check ---
         if (!password.equals(confirmPassword)) {
-            statusLabel.setText("Passwords do not match.");
+            statusLabel.setText("❌ Passwords do not match.");
             return;
         }
-
-        // Parse full name into first and last name
-        String[] nameParts = fullName.split(" ", 2);
-        String firstName = nameParts[0];
-        String lastName = nameParts.length > 1 ? nameParts[1] : "";
+        
+        // --- 4. Numeric and Positive Deposit Check ---
+        BigDecimal initialDeposit;
+        try {
+            initialDeposit = new BigDecimal(deposit.trim());
+            if (initialDeposit.compareTo(BigDecimal.ZERO) <= 0) {
+                statusLabel.setText("❌ Initial deposit must be greater than zero.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            statusLabel.setText("❌ Invalid deposit amount format.");
+            return;
+        }
+        
+        // --- 5. Account Number Format (Simple numeric check) ---
+        if (!accountNumber.matches("\\d+")) {
+            statusLabel.setText("❌ Account number must be numeric.");
+            return;
+        }
+        
+        // At this point, all client-side validation passed.
+        // The future backend call will go here.
+        
+        // Temporary success and redirect without backend call
+        statusLabel.setText("✅ Registration data validated! Redirecting to login...");
+        System.out.println("Validated registration for: " + email);
 
         // Parse initial deposit
         BigDecimal initialDeposit;
