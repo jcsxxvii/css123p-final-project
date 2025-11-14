@@ -55,6 +55,8 @@
 
         <!-- Buttons -->
         <VBox spacing="15" alignment="CENTER">
+            <!-- Inline status/welcome label bound to controller -->
+            <Label fx:id="welcomeText" text="" styleClass="normal-label" />
             <Button text="LOGIN" fx:id="loginButton" onAction="#handleLogin" styleClass="text-button"/>
             <Button text="REGISTER NEW ACCOUNT" fx:id="registerButton" onAction="#handleRegister" styleClass="text-button"/>
         </VBox>

@@ -1,16 +1,19 @@
 package com.css123group.corr4_app;
 
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
-import javafx.scene.Node;
-import javafx.event.ActionEvent;
-import java.io.IOException;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage; // Import Pattern and Matcher
 
 public class LoginController {
 
@@ -21,18 +24,49 @@ public class LoginController {
     private PasswordField passwordField;
 
     @FXML
-    private Label welcomeText;
+    private Label welcomeText; // We will minimize its use, preferring Alerts
+
+    // Email validation pattern (same as in RegisterController)
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
+        Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+    private boolean validateEmail(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+        return matcher.find();
+    }
 
     @FXML
     protected void handleLogin(ActionEvent event) {
         String email = emailField.getText();
         String password = passwordField.getText();
-
         System.out.println("Login clicked: " + email + " / " + password);
-        if (welcomeText != null) {
-            welcomeText.setText("Attempting login for: " + email);
+
+        // --- 1. Basic Emptiness Check ---
+        if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            // Use the new utility class
+            Alerts.showWarning("Input Missing", "Please enter both email and password.");
+            return;
         }
 
+        // --- 2. Email Format Validation ---
+        if (!validateEmail(email)) {
+            // Use the new utility class
+            Alerts.showError("Invalid Email Format", "Please enter a valid email address.");
+            return;
+        }
+
+        // --- Backend Call Simulation ---
+        // Since we are not touching the backend:
+        // Assume successful validation and proceed to HomePage
+        
+        System.out.println("Client-side validation passed for: " + email);
+
+        // Clear the status label (if it was used before)
+        if (welcomeText != null) {
+            welcomeText.setText("");
+        }
+
+        // NOTE: No authentication backend exists — proceed to HomePage for now.
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/css123group/corr4_app/HomePage.fxml"));
             Parent homePageRoot = loader.load();
@@ -41,9 +75,8 @@ public class LoginController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            if (welcomeText != null) {
-                welcomeText.setText("Failed to load HomePage.");
-            }
+            // Use the new utility class for error handling
+            Alerts.showError("Navigation Error", "Failed to load the main application Home Page.");
         }
     }
 
@@ -59,9 +92,7 @@ public class LoginController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            if (welcomeText != null) {
-                welcomeText.setText("Failed to load registration page.");
-            }
+            Alerts.showError("Navigation Error", "Failed to load the registration page.");
         }
     }
 }

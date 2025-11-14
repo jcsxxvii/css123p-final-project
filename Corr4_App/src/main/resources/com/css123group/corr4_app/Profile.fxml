@@ -12,6 +12,7 @@
     <Label text="Phone: +63 912 345 6789" styleClass="normal-label"/>
     <Label text="Account Type: Savings" styleClass="normal-label"/>
     <Label text="Mailing Address: 123 Main St" styleClass="normal-label"/>
+    <Label fx:id="placeholder" text="" styleClass="normal-label" visible="false"/>
 </VBox>
 
 
