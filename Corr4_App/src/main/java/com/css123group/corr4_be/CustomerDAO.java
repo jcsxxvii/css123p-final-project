@@ -7,7 +7,7 @@ import java.util.List;
 public class CustomerDAO {
     
     public boolean createCustomer(Customer customer) throws SQLException {
-        String sql = "INSERT INTO customers (first_name, last_name, email, phone, address, date_of_birth) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO registrations (fname, lname, email, phone, address, date_of_birth) VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -34,7 +34,7 @@ public class CustomerDAO {
     }
     
     public Customer getCustomerById(int id) throws SQLException {
-        String sql = "SELECT * FROM customers WHERE id = ?";
+        String sql = "SELECT * FROM registrations WHERE reg_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -49,9 +49,25 @@ public class CustomerDAO {
         return null;
     }
     
+    public Customer getCustomerByEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM registrations WHERE email = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return extractCustomerFromResultSet(rs);
+            }
+        }
+        return null;
+    }
+    
     public List<Customer> getAllCustomers() throws SQLException {
         List<Customer> customers = new ArrayList<>();
-        String sql = "SELECT * FROM customers ORDER BY id";
+        String sql = "SELECT * FROM registrations ORDER BY reg_id";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -66,9 +82,9 @@ public class CustomerDAO {
     
     private Customer extractCustomerFromResultSet(ResultSet rs) throws SQLException {
         Customer customer = new Customer();
-        customer.setId(rs.getInt("id"));
-        customer.setFirstName(rs.getString("first_name"));
-        customer.setLastName(rs.getString("last_name"));
+        customer.setId(rs.getInt("reg_id"));
+        customer.setFirstName(rs.getString("fname"));
+        customer.setLastName(rs.getString("lname"));
         customer.setEmail(rs.getString("email"));
         customer.setPhone(rs.getString("phone"));
         customer.setAddress(rs.getString("address"));

@@ -2,7 +2,7 @@ module com.css123group.corr4_app {
     requires transitive javafx.controls;
     requires transitive javafx.fxml;
     requires java.logging;
-    requires java.sql;
+    requires transitive java.sql;
     requires transitive javafx.web;
 
     requires org.controlsfx.controls;
@@ -12,4 +12,5 @@ module com.css123group.corr4_app {
 
     opens com.css123group.corr4_app to javafx.fxml;
     exports com.css123group.corr4_app;
+    exports com.css123group.corr4_be;
 }

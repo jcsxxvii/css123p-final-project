@@ -8,7 +8,7 @@ import java.util.List;
 public class AccountDAO {
     
     public boolean createAccount(Account account) throws SQLException {
-        String sql = "INSERT INTO accounts (customer_id, account_number, account_type, balance) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO accounts (c_id, acct_no, acct_type, bal) VALUES (?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -23,7 +23,7 @@ public class AccountDAO {
     }
     
     public Account getAccountByNumber(String accountNumber) throws SQLException {
-        String sql = "SELECT * FROM accounts WHERE account_number = ?";
+        String sql = "SELECT * FROM accounts WHERE acct_no = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -40,7 +40,7 @@ public class AccountDAO {
     
     public List<Account> getAccountsByCustomerId(int customerId) throws SQLException {
         List<Account> accounts = new ArrayList<>();
-        String sql = "SELECT * FROM accounts WHERE customer_id = ? ORDER BY opened_date DESC";
+        String sql = "SELECT * FROM accounts WHERE c_id = ? ORDER BY opened_on DESC";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -56,7 +56,7 @@ public class AccountDAO {
     }
     
     public boolean updateBalance(int accountId, BigDecimal newBalance) throws SQLException {
-        String sql = "UPDATE accounts SET balance = ? WHERE id = ?";
+        String sql = "UPDATE accounts SET bal = ? WHERE a_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -70,12 +70,12 @@ public class AccountDAO {
     
     private Account extractAccountFromResultSet(ResultSet rs) throws SQLException {
         Account account = new Account();
-        account.setId(rs.getInt("id"));
-        account.setCustomerId(rs.getInt("customer_id"));
-        account.setAccountNumber(rs.getString("account_number"));
-        account.setAccountType(rs.getString("account_type"));
-        account.setBalance(rs.getBigDecimal("balance"));
-        account.setOpenedDate(rs.getDate("opened_date").toLocalDate());
+        account.setId(rs.getInt("a_id"));
+        account.setCustomerId(rs.getInt("c_id"));
+        account.setAccountNumber(rs.getString("acct_no"));
+        account.setAccountType(rs.getString("acct_type"));
+        account.setBalance(rs.getBigDecimal("bal"));
+        account.setOpenedDate(rs.getDate("opened_on").toLocalDate());
         account.setStatus(rs.getString("status"));
         return account;
     }

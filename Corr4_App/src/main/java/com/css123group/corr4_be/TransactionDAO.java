@@ -8,7 +8,7 @@ public class TransactionDAO {
     public void recordTransaction(int accountId, String transactionType, 
                                 BigDecimal amount, String description, 
                                 BigDecimal balanceAfter) throws SQLException {
-        String sql = "INSERT INTO transactions (account_id, transaction_type, amount, description, balance_after) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO transactions (account_id, type, amount, description, balance_after) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

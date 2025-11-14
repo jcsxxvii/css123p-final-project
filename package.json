@@ -1,0 +1,27 @@
+{
+  "name": "css123p-final-project",
+  "version": "1.0.0",
+  "description": "for CORR4, our css123p final project. a bank application using JAVAFXML",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcsxxvii/css123p-final-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jcsxxvii/css123p-final-project/issues"
+  },
+  "homepage": "https://github.com/jcsxxvii/css123p-final-project#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.81.1"
+  },
+  "devDependencies": {
+    "supabase": "^2.58.5"
+  }
+}

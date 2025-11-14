@@ -2,6 +2,7 @@ package com.css123group.corr4_be;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 
 public class BankingService {
     private CustomerDAO customerDAO;
@@ -12,6 +13,63 @@ public class BankingService {
         this.customerDAO = new CustomerDAO();
         this.accountDAO = new AccountDAO();
         this.transactionDAO = new TransactionDAO();
+    }
+    
+    /**
+     * Authenticate a customer by email. In a real application, this would verify a password.
+     * For now, it simply checks if a customer with the given email exists.
+     * @param email The customer's email
+     * @return The Customer object if found, null otherwise
+     */
+    public Customer authenticateCustomer(String email) {
+        try {
+            return customerDAO.getCustomerByEmail(email);
+        } catch (SQLException e) {
+            System.err.println("Error authenticating customer: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    /**
+     * Get all accounts for a specific customer
+     * @param customerId The customer ID
+     * @return List of Account objects
+     */
+    public List<Account> getCustomerAccounts(int customerId) {
+        try {
+            return accountDAO.getAccountsByCustomerId(customerId);
+        } catch (SQLException e) {
+            System.err.println("Error retrieving customer accounts: " + e.getMessage());
+            return List.of();
+        }
+    }
+    
+    /**
+     * Get a specific customer by ID
+     * @param customerId The customer ID
+     * @return The Customer object if found, null otherwise
+     */
+    public Customer getCustomerById(int customerId) {
+        try {
+            return customerDAO.getCustomerById(customerId);
+        } catch (SQLException e) {
+            System.err.println("Error retrieving customer: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    /**
+     * Get a specific account by account number
+     * @param accountNumber The account number
+     * @return The Account object if found, null otherwise
+     */
+    public Account getAccountByNumber(String accountNumber) {
+        try {
+            return accountDAO.getAccountByNumber(accountNumber);
+        } catch (SQLException e) {
+            System.err.println("Error retrieving account: " + e.getMessage());
+            return null;
+        }
     }
     
     public boolean createNewCustomer(String firstName, String lastName, String email, 
