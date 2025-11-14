@@ -6,12 +6,47 @@
 <VBox xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.css123group.corr4_app.ProfileController"
+      fx:id="profileContainer"
       alignment="CENTER" spacing="20" styleClass="content-box" prefWidth="800" prefHeight="600">
+
     <Label text="PROFILE" styleClass="header-label"/>
-    <Label text="Email: user@example.com" styleClass="normal-label"/>
-    <Label text="Phone: +63 912 345 6789" styleClass="normal-label"/>
-    <Label text="Account Type: Savings" styleClass="normal-label"/>
-    <Label text="Mailing Address: 123 Main St" styleClass="normal-label"/>
+
+    <!-- Editable Profile Information -->
+    <VBox spacing="15" alignment="CENTER">
+        <HBox alignment="CENTER" spacing="10">
+            <Label text="Double-click any field to edit" styleClass="normal-label"
+                   style="-fx-text-fill: #ffccbc; -fx-font-style: italic;"/>
+        </HBox>
+
+        <HBox alignment="CENTER" spacing="10">
+            <Label fx:id="emailLabel" text="Email: user@example.com" styleClass="normal-label"
+                   style="-fx-cursor: hand;"/>
+        </HBox>
+
+        <HBox alignment="CENTER" spacing="10">
+            <Label fx:id="phoneLabel" text="Phone: +63 912 345 6789" styleClass="normal-label"
+                   style="-fx-cursor: hand;"/>
+        </HBox>
+
+        <HBox alignment="CENTER" spacing="10">
+            <Label fx:id="accountTypeLabel" text="Account Type: Savings" styleClass="normal-label"
+                   style="-fx-cursor: hand;"/>
+        </HBox>
+
+        <HBox alignment="CENTER" spacing="10">
+            <Label fx:id="addressLabel" text="Address: 123 Main St" styleClass="normal-label"
+                   style="-fx-cursor: hand;"/>
+        </HBox>
+    </VBox>
+
+    <!-- Instructions -->
+    <VBox spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+        <Label text="Press ESC to cancel editing" styleClass="normal-label"
+               style="-fx-font-size: 12px; -fx-text-fill: #cccccc;"/>
+        <Label text="Press Enter to confirm changes" styleClass="normal-label"
+               style="-fx-font-size: 12px; -fx-text-fill: #cccccc;"/>
+    </VBox>
 </VBox>
+
 
 
