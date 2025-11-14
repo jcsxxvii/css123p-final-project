@@ -1,7 +1,5 @@
-package corr4_be;
+package com.css123group.corr4_be;
 
-import models.Customer;
-import database.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

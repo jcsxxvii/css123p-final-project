@@ -1,9 +1,7 @@
-package corr4_be;
+package com.css123group.corr4_be;
 
-import database.DatabaseConnection;
 import java.sql.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 public class TransactionDAO {
     

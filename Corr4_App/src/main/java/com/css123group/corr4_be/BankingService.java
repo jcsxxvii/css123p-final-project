@@ -1,7 +1,5 @@
-package corr4_be;
+package com.css123group.corr4_be;
 
-import models.*;
-import dao.*;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 

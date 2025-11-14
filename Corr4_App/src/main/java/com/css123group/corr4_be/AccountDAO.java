@@ -1,7 +1,5 @@
-package corr4_be;
+package com.css123group.corr4_be;
 
-import models.Account;
-import database.DatabaseConnection;
 import java.sql.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;

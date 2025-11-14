@@ -1,4 +1,4 @@
-package corr4_be;
+package com.css123group.corr4_be;
 
 import java.sql.*;
 import java.util.Properties;
