@@ -2,6 +2,7 @@ package com.css123group.corr4_app;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,11 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.scene.control.*;
-import javafx.event.ActionEvent;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
+
 import com.css123group.corr4_be.Auth;
 import com.css123group.corr4_be.Customer;
 
@@ -31,6 +28,8 @@ public class RegisterController {
     @FXML private PasswordField confirmPasswordField;
     @FXML private TextField initialDepositField;
     @FXML private Label statusLabel;
+
+    private Auth auth;
 
     // Email validation pattern for a basic check
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
@@ -64,12 +63,11 @@ public class RegisterController {
         String email = emailField.getText().trim();
         String password = passwordField.getText();
         String confirmPassword = confirmPasswordField.getText();
-        String accountNumber = accountNumberField.getText();
         String deposit = initialDepositField.getText();
         
         // --- 1. Basic Emptiness Check ---
         if (fullName.isEmpty() || email.isEmpty() || password.isEmpty() ||
-                confirmPassword.isEmpty() || accountNumber.isEmpty() || deposit.isEmpty()) {
+                confirmPassword.isEmpty() || deposit.isEmpty()) {
             statusLabel.setText("❌ Please fill in all fields.");
             return;
         }
@@ -99,58 +97,44 @@ public class RegisterController {
             return;
         }
         
-        // --- 5. Account Number Format (Simple numeric check) ---
-        if (!accountNumber.matches("\\d+")) {
-            statusLabel.setText("❌ Account number must be numeric.");
-            return;
-        }
-        
         // At this point, all client-side validation passed.
-        // The future backend call will go here.
-        
-        // Temporary success and redirect without backend call
         statusLabel.setText("✅ Registration data validated! Redirecting to login...");
         System.out.println("Validated registration for: " + email);
 
-        // Parse initial deposit
-        BigDecimal initialDeposit;
+        // Parse full name into first and last name
+        String[] nameParts = fullName.split(" ", 2);
+        String firstName = nameParts[0];
+        String lastName = nameParts.length > 1 ? nameParts[1] : "";
+
+        // Create Customer object and register using Auth (stores credentials)
         try {
-            initialDeposit = new BigDecimal(depositText);
-            if (initialDeposit.compareTo(BigDecimal.ZERO) < 0) {
-                statusLabel.setText("Initial deposit must be non-negative.");
+            if (auth == null) {
+                auth = new Auth();
+            }
+            Customer customer = new Customer(firstName, lastName, email, "", "", java.time.LocalDate.parse("1990-01-01"));
+            Customer created = auth.registerCustomer(customer, password);
+            if (created == null) {
+                statusLabel.setText("Failed to create customer account.");
                 return;
             }
-        } catch (NumberFormatException e) {
-            statusLabel.setText("Invalid deposit amount. Please enter a valid number.");
-            return;
-        }
 
-            // Create Customer object and register using Auth (stores credentials)
-            try {
-                Customer customer = new Customer(firstName, lastName, email, "", "", java.time.LocalDate.parse("1990-01-01"));
-                Customer created = auth.registerCustomer(customer, password);
-                if (created == null) {
-                    statusLabel.setText("Failed to create customer account.");
-                    return;
+            statusLabel.setText("Registration successful! Redirecting to login...");
+            System.out.println("New registration: " + email);
+
+            // Switch back to login after 1 second
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                    javafx.application.Platform.runLater(() -> switchScene(event, "/com/css123group/corr4_app/Login.fxml", "Failed to load login page."));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+            }).start();
 
-                statusLabel.setText("Registration successful! Redirecting to login...");
-                System.out.println("New registration: " + email);
-
-                // Switch back to login after 1 second
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(1000);
-                        javafx.application.Platform.runLater(() -> switchScene(event, "/com/css123group/corr4_app/Login.fxml", "Failed to load login page."));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }).start();
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                statusLabel.setText("Error during registration: " + e.getMessage());
-            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            statusLabel.setText("Error during registration: " + e.getMessage());
+        }
     }
 
     @FXML

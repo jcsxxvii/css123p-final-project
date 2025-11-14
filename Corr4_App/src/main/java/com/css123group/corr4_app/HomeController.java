@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
@@ -18,17 +20,12 @@ public class HomeController {
     private BorderPane rootPane;
 
     @FXML
+    private Label customerNameLabel;
+
+    @FXML
     public void initialize() {
-        // Add global keyboard shortcuts
+        // Add global keyboard shortcuts and display customer information
         setupKeyboardShortcuts();
-    }
-
-    @FXML
-    private Label customerNameLabel; // Add this if your FXML has it
-
-    @FXML
-    private void initialize() {
-        // Display customer information
         updateCustomerInfo();
     }
 
@@ -135,6 +132,9 @@ public class HomeController {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    break;
+                default:
+                    // Ignore other key combinations
                     break;
             }
         } else if (event.getCode() == KeyCode.ESCAPE) {

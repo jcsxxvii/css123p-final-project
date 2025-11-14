@@ -6,17 +6,17 @@ import java.util.Properties;
 public class DatabaseConnection {
 
     // Supabase POOLER connection details (Singapore region)
-    private static final String HOST = "aws-0-ap-southeast-1.pooler.supabase.com";
+    private static final String HOST = "aws-1-ap-southeast-1.pooler.supabase.com";
     private static final int PORT = 5432;
     private static final String DATABASE = "postgres";
 
-    // Supabase username (original-style)
+    // Supabase username for your project
     private static final String USER = "postgres.mcrkbayvjgoqdxykhngc";
 
     // Supabase password
-    private static final String PASSWORD = "7hpAe0VQIv3nhhGY";
+    private static final String PASSWORD = "7hpAe0VQIv3nhhGY"; // <-- replace this
 
-    // Build JDBC URL
+    // JDBC URL
     private static final String URL =
         "jdbc:postgresql://" + HOST + ":" + PORT + "/" + DATABASE + "?sslmode=require";
 
@@ -49,7 +49,7 @@ public class DatabaseConnection {
         }
     }
 
-    // Optional: simple test connection
+    // Simple test method
     public static boolean testConnection() {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();

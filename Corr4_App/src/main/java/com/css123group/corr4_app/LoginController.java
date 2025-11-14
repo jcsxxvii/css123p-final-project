@@ -1,6 +1,7 @@
 package com.css123group.corr4_app;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage; // Import Pattern and Matcher
+import javafx.stage.Stage;
+
+import com.css123group.corr4_be.BankingService;
+import com.css123group.corr4_be.Auth;
+import com.css123group.corr4_be.Customer;
+import com.css123group.corr4_be.Account;
 
 public class LoginController {
 
@@ -110,6 +116,9 @@ public class LoginController {
             e.printStackTrace();
             // Use the new utility class for error handling
             Alerts.showError("Navigation Error", "Failed to load the main application Home Page.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alerts.showError("Login Error", "An error occurred during login: " + e.getMessage());
         }
     }
 
