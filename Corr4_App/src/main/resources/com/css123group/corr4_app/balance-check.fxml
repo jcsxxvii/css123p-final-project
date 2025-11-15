@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.bankapp.c0rr4.HelloController"
+            prefWidth="600" prefHeight="400"
+            style="-fx-background-color: #f0f0f0;">
+
+    <VBox alignment="CENTER_LEFT"
+          layoutX="50" layoutY="50"
+          prefWidth="300" prefHeight="150"
+          style="-fx-background-color: #007bff;
+                  -fx-border-radius: 10;
+                  -fx-background-radius: 10;
+                  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0, 0, 5);
+                  -fx-cursor: hand;">
+
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+
+        <Label text="TOTAL SAVINGS" style="-fx-font-size: 14px; -fx-text-fill: #b3d9ff; -fx-font-weight: bold;"/>
+
+        <Label fx:id="balanceLabel" text="••••••••••"
+               style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white;">
+            <VBox.margin>
+                <Insets top="5"/>
+            </VBox.margin>
+        </Label>
+
+        <Label text="(right-click to view your balance summary!)"
+               style="-fx-font-size: 10px; -fx-text-fill: #80bfff;">
+            <VBox.margin>
+                <Insets top="10"/>
+            </VBox.margin>
+        </Label>
+
+    </VBox>
+
+</AnchorPane>
